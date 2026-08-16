@@ -1,0 +1,50 @@
+model:
+  variant: full
+  reference_ckpt: weights/PFIR-SAM2_OrganoID_best_model.pth
+  sam2_root: ""
+  sam2_config: sam2/configs/sam2.1/sam2.1_hiera_l.yaml
+  sam2_ckpt: weights/sam2.1_hiera_large.pt
+  lora_rank: 8
+  lora_alpha: 16.0
+  lora_dropout: 0.0
+  lora_keywords: q,k,v,qkv,proj,attn
+  cnn_base_ch: 32
+  dec_ch: 128
+  lazy_init_size: 256
+data:
+  data_root: data/OrganoID
+  crop_size: 800
+  whole_size: 800
+  mixed_scale: true
+  whole_prob: 0.35
+  normalize: sam
+  min_area: 5
+  small_area: 256
+  small_boost: 3.0
+  center_sigma: 5.0
+  foreground_crop_prob: 0.75
+training:
+  save_root: outputs/training
+  run_name: full_retrained
+  epochs: 100
+  batch_size: 1
+  num_workers: 2
+  lr: 0.0001
+  lora_lr: 0.0001
+  weight_decay: 0.0001
+  seed: 42
+  expected_seed: 42
+  deterministic: true
+  amp: true
+  grad_clip: 1.0
+  print_freq: 20
+  save_debug_every: 0
+  debug_items: 4
+loss:
+  lambda_boundary: 0.5
+  lambda_center: 0.25
+  use_focal: false
+  mask_thresh: 0.5
+selection:
+  checkpoint_metric: validation foreground Dice
+  test_used_for_selection: false

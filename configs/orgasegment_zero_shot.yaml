@@ -1,0 +1,40 @@
+model:
+  checkpoint: weights/PFIR-SAM2_OrganoID_best_model.pth
+  sam2_root: ""
+  sam2_config: sam2/configs/sam2.1/sam2.1_hiera_l.yaml
+  sam2_checkpoint: weights/sam2.1_hiera_large.pt
+  device: cuda
+  lazy_init_size: 256
+inference:
+  tile_size: 800
+  overlap: 200
+  normalize: sam
+  amp: true
+  save_dense_cues: false
+raw_instance:
+  foreground_threshold: 0.50
+  boundary_threshold: 0.45
+  center_keep_threshold: 0.35
+  minimum_area: 30
+reconstruction:
+  foreground_threshold: 0.45
+  boundary_threshold: 0.40
+  center_threshold: 0.25
+  center_sigma: 1.0
+  watershed_min_distance: 10
+  distance_threshold: 3.0
+  minimum_area: 10
+  marker_dilate: 3
+  center_weight: 0.70
+  watershed_line: false
+rescue:
+  rescue_iou_threshold: 0.05
+  rescue_containment_threshold: 0.30
+  minimum_small_area: 5
+  maximum_small_area: 500
+  minimum_final_area: 5
+  foreground_confidence_threshold: 0.0
+protocol:
+  training_on_orgasegment: false
+  fine_tuning_on_orgasegment: false
+  calibration_on_orgasegment: false

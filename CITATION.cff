@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use PFIR-SAM2, please cite the accompanying manuscript."
+title: "PFIR-SAM2"
+type: software
+version: 0.1.0
+authors:
+  - name: "PFIR-SAM2 authors"
+repository-code: "https://github.com/OWNER/PFIR-SAM2"
+license: Apache-2.0
