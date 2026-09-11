@@ -1,11 +1,23 @@
 # PFIR-SAM2
 
-PFIR-SAM2 performs prompt-free instance segmentation of bright-field organoid
-images. It combines a LoRA-adapted SAM2.1 Hiera-L image encoder with a parallel
+PFIR-SAM2 performs prompt-free instance segmentation of label-free
+transmitted-light organoid microscopy. The primary OrganoIDNetData images are
+phase-contrast microscopy images. The method combines a LoRA-adapted SAM2.1
+Hiera-L image encoder with a parallel
 CNN local branch, residual multi-scale fusion, dense foreground/boundary/center
 cues, and cue-guided instance reconstruction with small-object rescue.
 
 ## Installation
+
+Tested environment:
+
+- Windows 11
+- Python 3.10.20
+- PyTorch 2.5.1 and torchvision 0.20.1
+- CUDA 12.1
+- SciPy 1.15.3
+- scikit-image 0.25.2
+- NVIDIA GeForce RTX 4060 Laptop GPU (8 GiB)
 
 Create the project environment:
 
@@ -39,10 +51,15 @@ path on the command line.
 
 ## Dataset preparation
 
-OrganoID was obtained from
-[OSF project xmes4](https://osf.io/xmes4/). The author-distributed Train, Val,
-and Test directories are used directly without repartitioning. Dataset files
-are not included. See [docs/DATASETS.md](docs/DATASETS.md).
+OrganoIDNetData was obtained from Kulkarni et al., *Scientific Data* (2024),
+[Zenodo record 10643410](https://doi.org/10.5281/zenodo.10643410). The released
+Training, Validation, and Test directories are used directly without
+repartitioning. Dataset files are not included. See
+[docs/DATASETS.md](docs/DATASETS.md).
+
+The public config filenames `*_organoid.yaml`, local folder alias
+`data/OrganoID`, and checkpoint alias `PFIR-SAM2_OrganoID_best_model.pth` are
+legacy local aliases retained for compatibility; they refer to OrganoIDNetData.
 
 ```bash
 python scripts/prepare_organoid.py --data-root data/OrganoID --output outputs/organoid_dataset_manifest.csv --size-groups-output-dir outputs/organoid_size_groups
@@ -50,10 +67,14 @@ python scripts/prepare_organoid.py --data-root data/OrganoID --output outputs/or
 
 ## Pretrained PFIR-SAM2 checkpoint
 
-The retained OrganoID checkpoint is approximately 1.03 GiB and is distributed
-as a separate release asset, not as a Git object. Place it at
-`weights/PFIR-SAM2_OrganoID_best_model.pth`. The permanent download URL will be
-added when the release asset is deposited.
+The retained OrganoIDNetData checkpoint is approximately 1.03 GiB and is
+distributed as a separate release asset, not as a Git object:
+
+- Release: [v0.1.0](https://github.com/tylorcreat/PFIR-SAM2/releases/tag/v0.1.0)
+- Asset: [best_model.pth](https://github.com/tylorcreat/PFIR-SAM2/releases/download/v0.1.0/best_model.pth)
+- SHA256: `25491093c89160e1bb04a91539abd6081ba8ef0a365ea3f634e2a295a746bad8`
+
+Place the downloaded file at `weights/PFIR-SAM2_OrganoID_best_model.pth`.
 
 ## Inference
 
@@ -86,10 +107,10 @@ the best checkpoint by Val foreground Dice. It requires the official SAM2 base
 checkpoint and the retained PFIR checkpoint for architecture/default provenance
 validation. Test data are not used for model or parameter selection.
 
-## Reproducing OrganoID evaluation
+## Reproducing OrganoIDNetData evaluation
 
-1. Download OrganoID from OSF project xmes4.
-2. Validate the author-distributed folders with `scripts/prepare_organoid.py`.
+1. Download OrganoIDNetData from Zenodo record 10643410.
+2. Validate the released folders with `scripts/prepare_organoid.py`.
 3. Obtain the official SAM2.1 Hiera-L and retained PFIR-SAM2 checkpoints.
 4. Run the inference and evaluation commands above.
 5. Compare the generated CSV definitions with the manuscript values; smoke-test
@@ -113,8 +134,11 @@ code required to reproduce the core PFIR-SAM2 workflow. Publication-layout and
 figure-rendering scripts are not required for running or evaluating the method
 and are not included. Third-party baseline repositories are also not copied.
 
-For baseline provenance, Cellpose-SAM denotes the official default pretrained
-Cellpose-SAM model used without fine-tuning on OrganoID.
+The Cellpose-SAM baseline uses MouseLand Cellpose 4.0.6 with the official
+`cpsam` model for automatic 2D inference. It uses no OrganoIDNetData training or
+fine-tuning and no GT-based parameter tuning. The fixed inference settings are
+`normalize=True`, `diameter=None`, `flow_threshold=0.4`,
+`cellprob_threshold=0.0`, and `min_size=15`.
 
 ## Citation
 

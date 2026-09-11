@@ -1,7 +1,8 @@
 # Model
 
-PFIR-SAM2 is a prompt-free dense instance-segmentation model for bright-field
-organoid images.
+PFIR-SAM2 is a prompt-free dense instance-segmentation model trained on
+OrganoIDNetData phase-contrast live-cell organoid images, described more broadly
+as label-free transmitted-light microscopy.
 
 ## Architecture
 
@@ -23,8 +24,8 @@ parameter names and mathematical behavior remain unchanged.
 
 ## Cue-guided instance reconstruction
 
-Sliding-window logits are sigmoid-transformed and Hann-blended. The frozen
-final-v2 reconstruction uses:
+Sliding-window logits are sigmoid-transformed and Hann-blended. The retained
+final reconstruction uses:
 
 ```text
 foreground threshold = 0.45
@@ -42,8 +43,9 @@ candidate only when no center-derived marker exists anywhere in the image. If
 that fallback also produces no marker, foreground connected components are
 returned.
 
-Small-object rescue starts from the reconstruction, checks raw candidate areas
-from 5 to 500 pixels, requires IoU below 0.05 and containment below 0.30, adds
-at least 5 free pixels, and finally relabels instances sequentially. In the
-retained inference chain, raw candidates themselves are generated with a
-30-pixel minimum-area filter.
+The reconstruction minimum area is 10 pixels. Small-object rescue starts from
+the reconstruction and uses a configured candidate range of 5 to 500 pixels,
+but raw candidates are generated with a 30-pixel minimum-area filter. The
+effective full-pipeline rescue range is therefore 30 to 500 pixels. A candidate
+is rescued only when IoU is below 0.05, containment is below 0.30, and at least
+5 pixels remain free before sequential relabeling.

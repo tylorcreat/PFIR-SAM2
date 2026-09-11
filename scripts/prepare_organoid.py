@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Validate author-distributed OrganoID folders and write a local manifest."""
+"""Validate released OrganoIDNetData folders and write a local manifest."""
 
 from __future__ import annotations
 
@@ -96,6 +96,7 @@ def main() -> None:
         [float(row["area"]) for row in instances_by_split.get("train", [])],
         dtype=float,
     )
+    train_areas = train_areas[train_areas >= 10]
     if train_areas.size == 0:
         raise RuntimeError("No training instances were found for size-group thresholds")
     small_threshold = float(np.quantile(train_areas, 1 / 3))
@@ -119,7 +120,7 @@ def main() -> None:
             writer.writerows(instance_rows)
     print(f"[DONE] validated {len(rows)} image-mask pairs -> {output}")
     print(
-        "[DONE] size groups from Train area tertiles: "
+        "[DONE] size groups from retained Train areas (area >= 10 pixels): "
         f"small<={small_threshold:.6f}, medium<={medium_threshold:.6f} -> {size_output}"
     )
 

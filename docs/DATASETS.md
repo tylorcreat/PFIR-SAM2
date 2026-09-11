@@ -1,16 +1,16 @@
 # Datasets
 
-## OrganoID
+## OrganoIDNetData
 
-PFIR-SAM2 uses the OrganoID dataset released by Matthews et al. through the
-[Open Science Framework project xmes4](https://osf.io/xmes4/). Download the
-dataset from the source repository. Do not copy its images or annotations into
-this Git repository.
+PFIR-SAM2 uses OrganoIDNetData from Kulkarni et al., *Scientific Data* (2024),
+available from [Zenodo record 10643410](https://doi.org/10.5281/zenodo.10643410).
+Download the dataset from the source repository. Do not copy its images or
+annotations into this Git repository.
 
 The author-distributed directories are used directly without repartitioning:
 
 ```text
-data/OrganoID/
+data/OrganoID/  # legacy local alias for OrganoIDNetData
   Train/
     Images/
     Masks/
@@ -28,9 +28,10 @@ Validate the download and generate the local instance-size table with:
 python scripts/prepare_organoid.py --data-root data/OrganoID --output outputs/organoid_dataset_manifest.csv --size-groups-output-dir outputs/organoid_size_groups
 ```
 
-The small, medium, and large groups follow the retained evaluation protocol:
-the first and second tertiles of Train instance areas define thresholds, and
-those fixed thresholds are applied to Val and Test.
+The retained size-stratification protocol excludes Training instances smaller
+than 10 pixels before deriving the 1/3 and 2/3 area quantiles. The resulting
+fixed OrganoIDNetData cutoffs are 201 and 457 pixels and are reused unchanged
+for Validation and Test.
 
 ## OrgaSegment
 
@@ -43,9 +44,3 @@ The PFIR-SAM2 OrgaSegment experiment is zero-shot: there is no OrgaSegment
 training, fine-tuning, or calibration. Download the data from its official
 record and provide the desired split paths to `scripts/infer.py` and
 `scripts/evaluate.py`. Raw OrgaSegment data are not redistributed here.
-
-## Split limitation
-
-Although the author-distributed OrganoID split enables standardized comparison,
-the available metadata do not establish independence at the culture, well, or
-biological-replicate level.
